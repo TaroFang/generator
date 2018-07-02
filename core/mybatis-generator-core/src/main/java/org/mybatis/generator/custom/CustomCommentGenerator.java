@@ -92,6 +92,7 @@ public class CustomCommentGenerator extends DefaultCommentGenerator {
 
     @Override
     public void addConfigurationProperties(Properties properties) {
+        super.addConfigurationProperties(properties);
         this.properties.putAll(properties);
         addFieldComments = StringUtility.isTrue(properties.getProperty(CustomPropertyRegistry.COMMENT_GENERATOR_ADD_FIELD_COMMENTS));
         addModelClassComments = StringUtility.isTrue(properties.getProperty(CustomPropertyRegistry.COMMENT_GENERATOR_ADD_MODEL_CLASS_COMMENTS));
@@ -101,7 +102,7 @@ public class CustomCommentGenerator extends DefaultCommentGenerator {
         addSetterComments = StringUtility.isTrue(properties.getProperty(CustomPropertyRegistry.COMMENT_GENERATOR_ADD_SETTER_COMMENTS));
         addGeneralMethodComments = StringUtility.isTrue(properties.getProperty(CustomPropertyRegistry.COMMENT_GENERATOR_ADD_GENERAL_METHOD_COMMENTS));
         addJavaFileComments = StringUtility.isTrue(properties.getProperty(CustomPropertyRegistry.COMMENT_GENERATOR_ADD_JAVA_FILE_COMMENTS));
-        addXmlComments = StringUtility.isTrue(properties.getProperty(CustomPropertyRegistry.COMMENT_GENERATOR_ADD_XML_COMMENTS)); 
+        addXmlComments = StringUtility.isTrue(properties.getProperty(CustomPropertyRegistry.COMMENT_GENERATOR_ADD_XML_COMMENTS));
     }
 
     @Override
