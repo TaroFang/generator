@@ -1,5 +1,5 @@
 /**
- *    Copyright 2006-2018 the original author or authors.
+ *    Copyright 2006-2019 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -29,12 +29,10 @@ import org.mybatis.generator.internal.util.JavaBeansUtil;
 
 public class InsertSelectiveMethodGenerator extends AbstractMethodGenerator {
     private FullyQualifiedJavaType recordType;
-    private String tableFieldName;
     
     private InsertSelectiveMethodGenerator(Builder builder) {
         super(builder);
         recordType = builder.recordType;
-        tableFieldName = builder.tableFieldName;
     }
 
     @Override
@@ -43,7 +41,7 @@ public class InsertSelectiveMethodGenerator extends AbstractMethodGenerator {
             return null;
         }
 
-        Set<FullyQualifiedJavaType> imports = new HashSet<FullyQualifiedJavaType>();
+        Set<FullyQualifiedJavaType> imports = new HashSet<>();
         
         imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.SqlBuilder")); //$NON-NLS-1$
         imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.render.RenderingStrategy")); //$NON-NLS-1$
@@ -58,15 +56,19 @@ public class InsertSelectiveMethodGenerator extends AbstractMethodGenerator {
         method.addBodyLine("return insert(SqlBuilder.insert(record)"); //$NON-NLS-1$
         method.addBodyLine("        .into(" + tableFieldName + ")"); //$NON-NLS-1$ //$NON-NLS-2$
         
-        List<IntrospectedColumn> columns = ListUtilities.removeIdentityAndGeneratedAlwaysColumns(introspectedTable.getAllColumns());
+        List<IntrospectedColumn> columns = ListUtilities.removeIdentityAndGeneratedAlwaysColumns(
+                introspectedTable.getAllColumns());
         for (IntrospectedColumn column : columns) {
+            String fieldName = calculateFieldName(column);
             if (column.isSequenceColumn()) {
-                method.addBodyLine("        .map(" + column.getJavaProperty() //$NON-NLS-1$
+                method.addBodyLine("        .map(" + fieldName //$NON-NLS-1$
                         + ").toProperty(\"" + column.getJavaProperty() //$NON-NLS-1$
                         + "\")"); //$NON-NLS-1$
             } else {
-                String methodName = JavaBeansUtil.getGetterMethodName(column.getJavaProperty(), column.getFullyQualifiedJavaType());
-                method.addBodyLine("        .map(" + column.getJavaProperty() //$NON-NLS-1$
+                String methodName =
+                        JavaBeansUtil.getGetterMethodName(column.getJavaProperty(),
+                                column.getFullyQualifiedJavaType());
+                method.addBodyLine("        .map(" + fieldName //$NON-NLS-1$
                         + ").toPropertyWhenPresent(\"" + column.getJavaProperty() //$NON-NLS-1$
                         + "\", record::" + methodName //$NON-NLS-1$
                         + ")"); //$NON-NLS-1$
@@ -88,18 +90,12 @@ public class InsertSelectiveMethodGenerator extends AbstractMethodGenerator {
 
     public static class Builder extends BaseBuilder<Builder, InsertSelectiveMethodGenerator> {
         private FullyQualifiedJavaType recordType;
-        private String tableFieldName;
         
         public Builder withRecordType(FullyQualifiedJavaType recordType) {
             this.recordType = recordType;
             return this;
         }
         
-        public Builder withTableFieldName(String tableFieldName) {
-            this.tableFieldName = tableFieldName;
-            return this;
-        }
-
         @Override
         public Builder getThis() {
             return this;

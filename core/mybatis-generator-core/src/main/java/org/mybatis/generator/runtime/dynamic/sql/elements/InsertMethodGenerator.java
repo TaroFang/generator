@@ -1,5 +1,5 @@
 /**
- *    Copyright 2006-2018 the original author or authors.
+ *    Copyright 2006-2019 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -27,12 +27,10 @@ import org.mybatis.generator.api.dom.java.Parameter;
 import org.mybatis.generator.codegen.mybatis3.ListUtilities;
 
 public class InsertMethodGenerator extends AbstractMethodGenerator {
-    private String tableFieldName;
     private FullyQualifiedJavaType recordType;
     
     private InsertMethodGenerator(Builder builder) {
         super(builder);
-        tableFieldName = builder.tableFieldName;
         recordType = builder.recordType;
     }
 
@@ -42,7 +40,7 @@ public class InsertMethodGenerator extends AbstractMethodGenerator {
             return null;
         }
         
-        Set<FullyQualifiedJavaType> imports = new HashSet<FullyQualifiedJavaType>();
+        Set<FullyQualifiedJavaType> imports = new HashSet<>();
 
         imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.SqlBuilder")); //$NON-NLS-1$
         imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.render.RenderingStrategy")); //$NON-NLS-1$
@@ -57,9 +55,12 @@ public class InsertMethodGenerator extends AbstractMethodGenerator {
         method.addBodyLine("return insert(SqlBuilder.insert(record)"); //$NON-NLS-1$
         method.addBodyLine("        .into(" + tableFieldName + ")"); //$NON-NLS-1$ //$NON-NLS-2$
         
-        List<IntrospectedColumn> columns = ListUtilities.removeIdentityAndGeneratedAlwaysColumns(introspectedTable.getAllColumns());
+        List<IntrospectedColumn> columns =
+                ListUtilities.removeIdentityAndGeneratedAlwaysColumns(introspectedTable.getAllColumns());
         for (IntrospectedColumn column : columns) {
-            method.addBodyLine("        .map(" + column.getJavaProperty() //$NON-NLS-1$
+            String fieldName = calculateFieldName(column);
+            
+            method.addBodyLine("        .map(" + fieldName //$NON-NLS-1$
                     + ").toProperty(\"" + column.getJavaProperty() //$NON-NLS-1$
                     + "\")"); //$NON-NLS-1$
         }
@@ -78,13 +79,7 @@ public class InsertMethodGenerator extends AbstractMethodGenerator {
     }
 
     public static class Builder extends BaseBuilder<Builder, InsertMethodGenerator> {
-        private String tableFieldName;
         private FullyQualifiedJavaType recordType;
-        
-        public Builder withTableFieldName(String tableFieldName) {
-            this.tableFieldName = tableFieldName;
-            return this;
-        }
         
         public Builder withRecordType(FullyQualifiedJavaType recordType) {
             this.recordType = recordType;

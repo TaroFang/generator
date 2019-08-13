@@ -1,5 +1,5 @@
 /**
- *    Copyright 2006-2017 the original author or authors.
+ *    Copyright 2006-2019 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -25,13 +25,11 @@ import org.mybatis.generator.api.dom.java.Parameter;
 
 public class UpdateByExampleMethodGenerator extends AbstractMethodGenerator {
     private FullyQualifiedJavaType recordType;
-    private String tableFieldName;
     private FragmentGenerator fragmentGenerator;
     
     private UpdateByExampleMethodGenerator(Builder builder) {
         super(builder);
         recordType = builder.recordType;
-        tableFieldName = builder.tableFieldName;
         fragmentGenerator = builder.fragmentGenerator;
     }
 
@@ -42,21 +40,24 @@ public class UpdateByExampleMethodGenerator extends AbstractMethodGenerator {
             return null;
         }
 
-        Set<FullyQualifiedJavaType> imports = new HashSet<FullyQualifiedJavaType>();
+        Set<FullyQualifiedJavaType> imports = new HashSet<>();
 
         imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.update.UpdateDSL")); //$NON-NLS-1$
-        imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.update.MyBatis3UpdateModelAdapter")); //$NON-NLS-1$
+        imports.add(new FullyQualifiedJavaType(
+                "org.mybatis.dynamic.sql.update.MyBatis3UpdateModelAdapter")); //$NON-NLS-1$
         imports.add(recordType);
         
         Method method = new Method("updateByExample"); //$NON-NLS-1$
         method.setDefault(true);
         context.getCommentGenerator().addGeneralMethodAnnotation(method, introspectedTable, imports);
         
-        FullyQualifiedJavaType returnType = new FullyQualifiedJavaType("UpdateDSL<MyBatis3UpdateModelAdapter<Integer>>"); //$NON-NLS-1$
+        FullyQualifiedJavaType returnType =
+                new FullyQualifiedJavaType("UpdateDSL<MyBatis3UpdateModelAdapter<Integer>>"); //$NON-NLS-1$
         method.setReturnType(returnType);
         method.addParameter(new Parameter(recordType, "record")); //$NON-NLS-1$
 
-        method.addBodyLine("return UpdateDSL.updateWithMapper(this::update, " + tableFieldName + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+        method.addBodyLine("return UpdateDSL.updateWithMapper(this::update, " //$NON-NLS-1$
+                + tableFieldName + ")"); //$NON-NLS-1$
 
         method.addBodyLines(fragmentGenerator.getSetEqualLines(introspectedTable.getAllColumns(), true));
 
@@ -72,7 +73,6 @@ public class UpdateByExampleMethodGenerator extends AbstractMethodGenerator {
 
     public static class Builder extends BaseBuilder<Builder, UpdateByExampleMethodGenerator> {
         private FullyQualifiedJavaType recordType;
-        private String tableFieldName;
         private FragmentGenerator fragmentGenerator;
         
         public Builder withRecordType(FullyQualifiedJavaType recordType) {
@@ -80,11 +80,6 @@ public class UpdateByExampleMethodGenerator extends AbstractMethodGenerator {
             return this;
         }
         
-        public Builder withTableFieldName(String tableFieldName) {
-            this.tableFieldName = tableFieldName;
-            return this;
-        }
-
         public Builder withFragmentGenerator(FragmentGenerator fragmentGenerator) {
             this.fragmentGenerator = fragmentGenerator;
             return this;
