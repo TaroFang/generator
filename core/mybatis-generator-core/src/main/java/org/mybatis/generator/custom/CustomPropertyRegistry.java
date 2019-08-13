@@ -15,19 +15,27 @@
  */
 package org.mybatis.generator.custom;
 
-import org.mybatis.generator.config.PropertyRegistry;
-
 /**
  * @author tarofang@163.com
  */
-public class CustomPropertyRegistry extends PropertyRegistry {
+public class CustomPropertyRegistry {
+
+    /** 字段注释 */
     public static final String COMMENT_GENERATOR_ADD_FIELD_COMMENTS = "addFieldComments";
+    /** 方法注释 */
     public static final String COMMENT_GENERATOR_ADD_MODEL_CLASS_COMMENTS = "addModelClassComments";
+    /** 类注释 */
     public static final String COMMENT_GENERATOR_ADD_CLASS_COMMENTS = "addClassComments";
+    /** 枚举注释 */
     public static final String COMMENT_GENERATOR_ADD_ENUM_COMMENTS = "addEnumComments";
+    /** getter 注释 */
     public static final String COMMENT_GENERATOR_ADD_GETTER_COMMENTS = "addGetterComments";
+    /** setter注释 */
     public static final String COMMENT_GENERATOR_ADD_SETTER_COMMENTS = "addSetterComments";
+    /**  */
     public static final String COMMENT_GENERATOR_ADD_GENERAL_METHOD_COMMENTS = "addGeneralMethodComments";
+    /**  */
     public static final String COMMENT_GENERATOR_ADD_JAVA_FILE_COMMENTS = "addJavaFileComments";
+    /** 生成的 xml 注释 */
     public static final String COMMENT_GENERATOR_ADD_XML_COMMENTS = "addXmlComments";
 }

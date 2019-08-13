@@ -15,15 +15,18 @@
  */
 package org.mybatis.generator.plugins;
 
-import java.util.List;
-
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.IntrospectedTable.TargetRuntime;
 import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.api.dom.java.Interface;
 
+import java.util.List;
+import java.util.Properties;
+
 public class MapperAnnotationPlugin extends PluginAdapter {
+
+    private boolean addMapperAnnotation = false;
 
     @Override
     public boolean validate(List<String> warnings) {
@@ -31,9 +34,15 @@ public class MapperAnnotationPlugin extends PluginAdapter {
     }
 
     @Override
+    public void setProperties(Properties properties) {
+        super.setProperties(properties);
+        this.addMapperAnnotation = Boolean.parseBoolean(properties.getProperty("addMapperAnnotation"));
+    }
+
+    @Override
     public boolean clientGenerated(Interface interfaze, IntrospectedTable introspectedTable) {
 
-        if (introspectedTable.getTargetRuntime() == TargetRuntime.MYBATIS3) {
+        if (introspectedTable.getTargetRuntime() == TargetRuntime.MYBATIS3 && addMapperAnnotation) {
             // don't need to do this for MYBATIS3_DSQL as that runtime already adds this annotation 
             interfaze.addImportedType(
                     new FullyQualifiedJavaType("org.apache.ibatis.annotations.Mapper")); //$NON-NLS-1$
